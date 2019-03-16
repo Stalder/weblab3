@@ -14,42 +14,37 @@ body.appendChild(canvas);
 var ctx = canvas.getContext("2d");
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-var autumnUrl = "https://source.unsplash.com/collection/1147628/400x300";
 var summerUrl = "https://source.unsplash.com/collection/1147624/400x300";
-var springUrl = "https://source.unsplash.com/collection/1127173/400x300";
+var autumnUrl = "https://source.unsplash.com/collection/1147628/400x300";
 var winterUrl = "https://source.unsplash.com/collection/1127163/400x300";
+var springUrl = "https://source.unsplash.com/collection/1127173/400x300";
 
-var image1 = new Image();
-image1.onload = function() {
-  ctx.globalAlpha = 0.5;
-  ctx.drawImage(image1, 0, 0);
-  ctx.globalAlpha = 1;
-};
-image1.src = autumnUrl;
+var imageSources = [summerUrl, autumnUrl, winterUrl, springUrl];
+var images = [new Image(), new Image(), new Image(), new Image()];
 
-var image2 = new Image();
-image2.onload = function() {
-  ctx.globalAlpha = 0.5;
-  ctx.drawImage(image2, IMAGE_WIDTH, 0);
-  ctx.globalAlpha = 1;
-};
-image2.src = summerUrl;
+var loadedImagesCount = 0;
 
-var image3 = new Image();
-image3.onload = function() {
-  ctx.globalAlpha = 0.5;
-  ctx.drawImage(image3, 0, IMAGE_HEIGHT);
-  ctx.globalAlpha = 1;
-};
-image3.src = springUrl;
+function onAllImagesLoaded() {
+  for (var i = 0; i < 4; i++) {
+    ctx.globalAlpha = 0.5;
+    ctx.drawImage(
+      images[i],
+      i % 2 && IMAGE_WIDTH,
+      Math.floor(i / 2) && IMAGE_HEIGHT
+    );
+    ctx.globalAlpha = 1;
+  }
+}
 
-var image4 = new Image();
-image4.onload = function() {
-  ctx.globalAlpha = 0.5;
-  ctx.drawImage(image4, IMAGE_WIDTH, IMAGE_HEIGHT);
-  ctx.globalAlpha = 1;
-};
-image4.src = winterUrl;
+function onImageLoaded() {
+  loadedImagesCount++;
+  if (loadedImagesCount === 4) onAllImagesLoaded();
+}
+
+for (var i = 0; i < 4; i++) {
+  images[i].onload = onImageLoaded;
+  images[i].src = imageSources[i];
+}
 
 function asyncGet(url, cb) {
   var xhr = new XMLHttpRequest();
