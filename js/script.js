@@ -23,6 +23,9 @@ var images = [new Image(), new Image(), new Image(), new Image()];
 
 var generation = 0;
 var loadedImagesCount = 0;
+var areImagesDrawed = false;
+var isTextFetched = false;
+var textToDraw = null;
 
 function asyncPostRequest(url, body, cb) {
   var xhr = new XMLHttpRequest();
@@ -49,8 +52,24 @@ function asyncGetRequest(url, cb) {
   xhr.send(null);
 }
 
+function clearText(textWithTags) {
+  var htmlElement = document.createElement("div");
+  htmlElement.innerHTML = textWithTags;
+  return htmlElement.textContent || htmlElement.innerText || "";
+}
+
+function tryToDrawText() {
+  if (isTextFetched && areImagesDrawed) {
+    console.log("Everything is loaded. Draw text");
+    console.log("Drawing: " + textToDraw);
+  }
+}
+
 function onTextFetched(result) {
-  console.log(result);
+  var textWithTags = JSON.parse(result)[0].content;
+  textToDraw = clearText(textWithTags);
+  isTextFetched = true;
+  tryToDrawText();
 }
 
 function fetchText() {
@@ -70,6 +89,9 @@ function onAllImagesLoaded() {
     );
     ctx.globalAlpha = 1;
   }
+
+  areImagesDrawed = true;
+  tryToDrawText();
 }
 
 function onImageLoaded() {
@@ -78,6 +100,9 @@ function onImageLoaded() {
 }
 
 function generatePost() {
+  textToDraw = null;
+  isTextFetched = false;
+  areImagesDrawed = false;
   generation++;
   loadedImagesCount = 0;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
