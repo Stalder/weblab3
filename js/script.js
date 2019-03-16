@@ -65,6 +65,8 @@ function tryToDrawText() {
     ctx.font = "30px Helvetica";
     ctx.fillStyle = "white";
     ctx.fillText(textToDraw, 320, 200);
+    var img = canvas.toDataURL("image/png");
+    console.log(img);
   }
 }
 
@@ -76,8 +78,10 @@ function onTextFetched(result) {
 }
 
 function fetchText() {
+  var random = Math.random();
   asyncGetRequest(
-    "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1",
+    "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&generation=" +
+      random,
     onTextFetched
   );
 }
@@ -108,10 +112,13 @@ function generatePost() {
   areImagesDrawed = false;
   generation++;
   loadedImagesCount = 0;
+  images = [new Image(), new Image(), new Image(), new Image()];
+
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   for (var i = 0; i < 4; i++) {
     images[i].onload = onImageLoaded;
+    images[i].setAttribute("crossOrigin", "Anonymous");
     images[i].src = imageSources[i] + "?generation=" + generation;
   }
 
