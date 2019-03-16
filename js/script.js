@@ -55,13 +55,16 @@ function asyncGetRequest(url, cb) {
 function clearText(textWithTags) {
   var htmlElement = document.createElement("div");
   htmlElement.innerHTML = textWithTags;
-  return htmlElement.textContent || htmlElement.innerText || "";
+  var textWithoutTags = htmlElement.textContent || htmlElement.innerText || "";
+  return textWithoutTags.trim();
 }
 
 function tryToDrawText() {
   if (isTextFetched && areImagesDrawed) {
-    console.log("Everything is loaded. Draw text");
-    console.log("Drawing: " + textToDraw);
+    ctx.textAlign = "center";
+    ctx.font = "30px Helvetica";
+    ctx.fillStyle = "white";
+    ctx.fillText(textToDraw, 320, 200);
   }
 }
 
