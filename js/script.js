@@ -12,7 +12,6 @@ var body = document.getElementsByTagName("body")[0];
 body.appendChild(canvas);
 
 var ctx = canvas.getContext("2d");
-ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 var summerUrl = "https://source.unsplash.com/collection/1147624/400x300";
 var autumnUrl = "https://source.unsplash.com/collection/1147628/400x300";
@@ -22,7 +21,44 @@ var springUrl = "https://source.unsplash.com/collection/1127173/400x300";
 var imageSources = [summerUrl, autumnUrl, winterUrl, springUrl];
 var images = [new Image(), new Image(), new Image(), new Image()];
 
+var generation = 0;
 var loadedImagesCount = 0;
+
+function asyncPostRequest(url, body, cb) {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) cb(xhr.responseText);
+      else throw new Error("Request failed");
+    }
+  };
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.send(body);
+}
+
+function asyncGetRequest(url, cb) {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) cb(xhr.responseText);
+      else throw new Error("Request failed");
+    }
+  };
+  xhr.open("GET", url, true);
+  xhr.send(null);
+}
+
+function onTextFetched(result) {
+  console.log(result);
+}
+
+function fetchText() {
+  asyncGetRequest(
+    "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1",
+    onTextFetched
+  );
+}
 
 function onAllImagesLoaded() {
   for (var i = 0; i < 4; i++) {
@@ -41,19 +77,17 @@ function onImageLoaded() {
   if (loadedImagesCount === 4) onAllImagesLoaded();
 }
 
-for (var i = 0; i < 4; i++) {
-  images[i].onload = onImageLoaded;
-  images[i].src = imageSources[i];
+function generatePost() {
+  generation++;
+  loadedImagesCount = 0;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (var i = 0; i < 4; i++) {
+    images[i].onload = onImageLoaded;
+    images[i].src = imageSources[i] + "?generation=" + generation;
+  }
+
+  fetchText();
 }
 
-function asyncGet(url, cb) {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      if (xhr.status == 200) cb(xhr.responseText);
-      else throw new Error("Request failed");
-    }
-  };
-  xhr.open("GET", url, true);
-  xhr.send(null);
-}
+generatePost();
