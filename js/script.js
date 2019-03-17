@@ -8,8 +8,20 @@ var canvas = document.createElement("canvas");
 canvas.setAttribute("width", CANVAS_WIDTH);
 canvas.setAttribute("height", CANVAS_HEIGHT);
 
+var br = document.createElement("br");
+
+var generateText = document.createElement("p");
+generateText.innerText = "Generate";
+
+var generateButton = document.createElement("button");
+generateButton.setAttribute("onclick", "generatePost()");
+generateButton.setAttribute("height", CANVAS_HEIGHT);
+generateButton.appendChild(generateText);
+
 var body = document.getElementsByTagName("body")[0];
 body.appendChild(canvas);
+body.appendChild(br);
+body.appendChild(generateButton);
 
 var ctx = canvas.getContext("2d");
 
@@ -114,6 +126,7 @@ function fetchText() {
 function onAllImagesLoaded() {
   var displacementX = (CANVAS_WIDTH - 2 * IMAGE_WIDTH) * Math.random();
   var displacementY = (CANVAS_HEIGHT - 2 * IMAGE_HEIGHT) * Math.random();
+  ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   for (var i = 0; i < 4; i++) {
     ctx.globalAlpha = 0.5;
