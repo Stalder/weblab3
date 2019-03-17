@@ -27,19 +27,6 @@ var areImagesDrawed = false;
 var isTextFetched = false;
 var textToDraw = null;
 
-function asyncPostRequest(url, body, cb) {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState == 4) {
-      if (xhr.status == 200) cb(xhr.responseText);
-      else throw new Error("Request failed");
-    }
-  };
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send(body);
-}
-
 function asyncGetRequest(url, cb) {
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -59,12 +46,54 @@ function clearText(textWithTags) {
   return textWithoutTags.trim();
 }
 
+function separateTextByLines(text) {
+  var charWidth = 20;
+  var canvasPadding = 20;
+  if (text.length * charWidth < CANVAS_WIDTH - canvasPadding) {
+    return [text];
+  } else {
+    var words = text.split(" ");
+    var result = [];
+    var currentLine = " ";
+    for (var i = 0; i < words.length; i++) {
+      if (
+        currentLine.length * charWidth + words[i].length * charWidth <
+        CANVAS_WIDTH - canvasPadding
+      ) {
+        currentLine += words[i] + " ";
+      } else {
+        if (result.length === 4) {
+          currentLine += "...";
+          result.push(currentLine);
+          return result;
+        }
+        result.push(currentLine);
+        currentLine = " " + words[i] + " ";
+      }
+    }
+    return result;
+  }
+}
+
 function tryToDrawText() {
   if (isTextFetched && areImagesDrawed) {
     ctx.textAlign = "center";
     ctx.font = "30px Helvetica";
     ctx.fillStyle = "white";
-    ctx.fillText(textToDraw, 320, 200);
+
+    var lineHeight = 36;
+
+    var lines = separateTextByLines(textToDraw);
+    var startY = CANVAS_HEIGHT / 2 - (lines.length / 2) * lineHeight;
+
+    // console.log(textToDraw);
+    // console.log(lines);
+
+    for (var i = 0; i < lines.length; i++) {
+      console.log(lines[i], 320, startY + i * lineHeight);
+      ctx.fillText(lines[i], 320, startY + i * lineHeight);
+    }
+
     var img = canvas.toDataURL("image/png");
     console.log(img);
   }
