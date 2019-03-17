@@ -86,11 +86,7 @@ function tryToDrawText() {
     var lines = separateTextByLines(textToDraw);
     var startY = CANVAS_HEIGHT / 2 - (lines.length / 2) * lineHeight;
 
-    // console.log(textToDraw);
-    // console.log(lines);
-
     for (var i = 0; i < lines.length; i++) {
-      console.log(lines[i], 320, startY + i * lineHeight);
       ctx.fillText(lines[i], 320, startY + i * lineHeight);
     }
 
@@ -116,13 +112,15 @@ function fetchText() {
 }
 
 function onAllImagesLoaded() {
+  var displacementX = (CANVAS_WIDTH - 2 * IMAGE_WIDTH) * Math.random();
+  var displacementY = (CANVAS_HEIGHT - 2 * IMAGE_HEIGHT) * Math.random();
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   for (var i = 0; i < 4; i++) {
     ctx.globalAlpha = 0.5;
     ctx.drawImage(
       images[i],
-      i % 2 && IMAGE_WIDTH,
-      Math.floor(i / 2) && IMAGE_HEIGHT
+      (i % 2 && IMAGE_WIDTH) + displacementX,
+      (Math.floor(i / 2) && IMAGE_HEIGHT) + displacementY
     );
     ctx.globalAlpha = 1;
   }
