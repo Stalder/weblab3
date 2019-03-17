@@ -19,7 +19,7 @@ var winterUrl = "https://source.unsplash.com/collection/1127163/400x300";
 var springUrl = "https://source.unsplash.com/collection/1127173/400x300";
 
 var imageSources = [summerUrl, autumnUrl, winterUrl, springUrl];
-var images = [new Image(), new Image(), new Image(), new Image()];
+var images = [];
 
 var generation = 0;
 var loadedImagesCount = 0;
@@ -125,7 +125,7 @@ function tryToFetchNext(suitableImages) {
   }.bind(this);
 
   image.setAttribute("crossOrigin", "Anonymous");
-  image.src = imageSources[responseCount % 4] + "?random=" + Math.random();
+  image.src = imageSources[suitableImages.length] + "?random=" + Math.random();
 }
 
 function collectFourImages() {
