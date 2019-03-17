@@ -87,6 +87,7 @@ function fetchText() {
 }
 
 function onAllImagesLoaded() {
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   for (var i = 0; i < 4; i++) {
     ctx.globalAlpha = 0.5;
     ctx.drawImage(
@@ -101,9 +102,38 @@ function onAllImagesLoaded() {
   tryToDrawText();
 }
 
-function onImageLoaded() {
-  loadedImagesCount++;
-  if (loadedImagesCount === 4) onAllImagesLoaded();
+var responseCount = 0;
+
+function tryToFetchNext(suitableImages) {
+  responseCount++;
+  var image = new Image();
+
+  image.onerror = function(error) {
+    console.log("Catched CORS error");
+    tryToFetchNext(suitableImages);
+  }.bind(this);
+
+  image.onload = function() {
+    console.log("Successfully requested");
+    suitableImages.push(image);
+    if (suitableImages.length < 4) {
+      tryToFetchNext(suitableImages);
+    } else {
+      images = suitableImages;
+      onAllImagesLoaded();
+    }
+  }.bind(this);
+
+  image.setAttribute("crossOrigin", "Anonymous");
+  image.src = imageSources[responseCount % 4] + "?random=" + Math.random();
+}
+
+function collectFourImages() {
+  var suitableImages = [];
+  responseCount = 0;
+  tryToFetchNext(suitableImages);
+
+  return suitableImages;
 }
 
 function generatePost() {
@@ -112,16 +142,8 @@ function generatePost() {
   areImagesDrawed = false;
   generation++;
   loadedImagesCount = 0;
-  images = [new Image(), new Image(), new Image(), new Image()];
 
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  for (var i = 0; i < 4; i++) {
-    images[i].onload = onImageLoaded;
-    images[i].setAttribute("crossOrigin", "Anonymous");
-    images[i].src = imageSources[i] + "?generation=" + generation;
-  }
-
+  collectFourImages();
   fetchText();
 }
 
