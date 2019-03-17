@@ -1,3 +1,6 @@
+// https://jsfiddle.net/user2314737/28wqq1gu/
+// Thanks to this example for downloading
+
 var CANVAS_WIDTH = 640;
 var CANVAS_HEIGHT = 480;
 
@@ -28,7 +31,6 @@ var saveButtonLinkWrapper = document.createElement("a");
 saveButtonLinkWrapper.setAttribute("id", "download");
 saveButtonLinkWrapper.setAttribute("download", "collage.jpg");
 saveButtonLinkWrapper.setAttribute("href", "");
-// saveButtonLinkWrapper.setAttribute("onclick", "download_img(this);");
 saveButtonLinkWrapper.appendChild(saveButton);
 
 var body = document.getElementsByTagName("body")[0];
@@ -48,7 +50,6 @@ var imageSources = [summerUrl, autumnUrl, winterUrl, springUrl];
 var images = [];
 
 var generation = 0;
-var loadedImagesCount = 0;
 var areImagesDrawed = false;
 var isTextFetched = false;
 var textToDraw = null;
@@ -197,14 +198,9 @@ function generatePost() {
   isTextFetched = false;
   areImagesDrawed = false;
   generation++;
-  loadedImagesCount = 0;
 
   collectFourImages();
   fetchText();
 }
-
-// function save() {
-//   saveButtonLinkWrapper.href = resultImage;
-// }
 
 generatePost();
