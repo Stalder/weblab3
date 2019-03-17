@@ -133,6 +133,11 @@ function onTextFetched(result) {
 
 function fetchText() {
   var random = Math.random();
+  console.log(
+    "Fetching: " +
+      "https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&generation=" +
+      random
+  );
   asyncGetRequest(
     "https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&generation=" +
       random,
