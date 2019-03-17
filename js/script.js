@@ -15,13 +15,27 @@ generateText.innerText = "Generate";
 
 var generateButton = document.createElement("button");
 generateButton.setAttribute("onclick", "generatePost()");
-generateButton.setAttribute("height", CANVAS_HEIGHT);
+generateButton.setAttribute("style", "margin-right: 15px");
 generateButton.appendChild(generateText);
+
+var saveText = document.createElement("p");
+saveText.innerText = "Save";
+
+var saveButton = document.createElement("button");
+saveButton.appendChild(saveText);
+
+var saveButtonLinkWrapper = document.createElement("a");
+saveButtonLinkWrapper.setAttribute("id", "download");
+saveButtonLinkWrapper.setAttribute("download", "collage.jpg");
+saveButtonLinkWrapper.setAttribute("href", "");
+// saveButtonLinkWrapper.setAttribute("onclick", "download_img(this);");
+saveButtonLinkWrapper.appendChild(saveButton);
 
 var body = document.getElementsByTagName("body")[0];
 body.appendChild(canvas);
 body.appendChild(br);
 body.appendChild(generateButton);
+body.appendChild(saveButtonLinkWrapper);
 
 var ctx = canvas.getContext("2d");
 
@@ -38,6 +52,8 @@ var loadedImagesCount = 0;
 var areImagesDrawed = false;
 var isTextFetched = false;
 var textToDraw = null;
+
+var resultImage = null;
 
 function asyncGetRequest(url, cb) {
   var xhr = new XMLHttpRequest();
@@ -102,8 +118,8 @@ function tryToDrawText() {
       ctx.fillText(lines[i], 320, startY + i * lineHeight);
     }
 
-    var img = canvas.toDataURL("image/png");
-    console.log(img);
+    resultImage = canvas.toDataURL("image/jpg");
+    saveButtonLinkWrapper.href = resultImage;
   }
 }
 
@@ -186,5 +202,9 @@ function generatePost() {
   collectFourImages();
   fetchText();
 }
+
+// function save() {
+//   saveButtonLinkWrapper.href = resultImage;
+// }
 
 generatePost();
